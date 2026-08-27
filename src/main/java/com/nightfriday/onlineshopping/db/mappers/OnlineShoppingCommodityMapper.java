@@ -1,6 +1,7 @@
 package com.nightfriday.onlineshopping.db.mappers;
 
 import com.nightfriday.onlineshopping.db.po.OnlineShoppingCommodity;
+import java.util.List;
 
 public interface OnlineShoppingCommodityMapper {
     int deleteByPrimaryKey(Long commodityId);
@@ -14,4 +15,6 @@ public interface OnlineShoppingCommodityMapper {
     int updateByPrimaryKeySelective(OnlineShoppingCommodity record);
 
     int updateByPrimaryKey(OnlineShoppingCommodity record);
+
+  List<OnlineShoppingCommodity> selectByUserId(Long userId);
 }
