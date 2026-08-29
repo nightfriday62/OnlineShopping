@@ -5,7 +5,6 @@ import com.nightfriday.onlineshopping.db.mappers.OnlineShoppingCommodityMapper;
 import com.nightfriday.onlineshopping.db.po.OnlineShoppingCommodity;
 import jakarta.annotation.Resource;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -43,7 +42,7 @@ public class OnlineShoppingCommodityDaoImpl implements OnlineShoppingCommodityDa
   }
 
   @Override
-  public List<OnlineShoppingCommodity> selectByUserId(Long userId) {
-    return onlineShoppingCommodityMapper.selectByUserId(userId);
+  public List<OnlineShoppingCommodity> listCommoditiesByUserId(Long l) {
+    return onlineShoppingCommodityMapper.selectByUserId(l);
   }
 }

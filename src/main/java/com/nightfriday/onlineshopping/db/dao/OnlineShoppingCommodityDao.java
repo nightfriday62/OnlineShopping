@@ -15,5 +15,6 @@ public interface OnlineShoppingCommodityDao {
   int updateByPrimaryKey(OnlineShoppingCommodity record);
 
   OnlineShoppingCommodity selectByPrimaryKey(Long commodityId);
-  List<OnlineShoppingCommodity> selectByUserId(Long userId);
+
+  List<OnlineShoppingCommodity> listCommoditiesByUserId(Long l);
 }

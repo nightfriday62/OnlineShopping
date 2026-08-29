@@ -1,5 +1,10 @@
 package com.nightfriday.onlineshopping.db.po;
 
+import lombok.Builder;
+import lombok.Data;
+
+@Builder
+@Data
 public class OnlineShoppingUser {
     private Long userId;
 
