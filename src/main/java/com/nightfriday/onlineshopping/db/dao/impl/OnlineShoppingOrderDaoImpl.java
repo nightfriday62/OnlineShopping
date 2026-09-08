@@ -40,4 +40,9 @@ public class OnlineShoppingOrderDaoImpl implements OnlineShoppingOrderDao {
   public int deleteByPrimaryKey(Long id) {
     return mapper.deleteByPrimaryKey(id);
   }
+
+  @Override
+  public OnlineShoppingOrder selectByOrderNo(String orderNum) {
+    return mapper.selectByOrderNum(orderNum);
+  }
 }

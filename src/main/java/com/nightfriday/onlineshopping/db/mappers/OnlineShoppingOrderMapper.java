@@ -14,4 +14,6 @@ public interface OnlineShoppingOrderMapper {
     int updateByPrimaryKeySelective(OnlineShoppingOrder record);
 
     int updateByPrimaryKey(OnlineShoppingOrder record);
+
+  OnlineShoppingOrder selectByOrderNum(String orderNum);
 }

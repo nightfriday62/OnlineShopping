@@ -28,24 +28,34 @@ public class CommodityController {
       @RequestParam Integer availableStock,
       @RequestParam Long creatorUserId,
       Map<String, Object> model) {
-    OnlineShoppingCommodity commodity = OnlineShoppingCommodity.builder()
-        .commodityName(commodityName)
-        .commodityDesc(commodityDesc)
-        .price(price)
-        .availableStock(availableStock)
-        .totalStock(availableStock)
-        .creatorUserId(creatorUserId)
-        .lockStock(0)
-        .build();
+    OnlineShoppingCommodity commodity =
+        OnlineShoppingCommodity.builder()
+            .commodityName(commodityName)
+            .commodityDesc(commodityDesc)
+            .price(price)
+            .availableStock(availableStock)
+            .totalStock(availableStock)
+            .creatorUserId(creatorUserId)
+            .lockStock(0)
+            .build();
     int savedId = dao.insert(commodity);
     commodity.setCommodityId((long) savedId);
     model.put("abc", commodity);
     return "add_commodity_success";
   }
+
   @GetMapping("/listItems/{sellerId}")
-    public String listItems(@PathVariable String sellerId, Map<String, Object> model) {
-        List<OnlineShoppingCommodity> commodities = dao.listCommoditiesByUserId(Long.parseLong(sellerId));
-        model.put("itemList", commodities);
-        return "list_items";
-    }
+  public String listItems(@PathVariable String sellerId, Map<String, Object> model) {
+    List<OnlineShoppingCommodity> commodities =
+        dao.listCommoditiesByUserId(Long.parseLong(sellerId));
+    model.put("itemList", commodities);
+    return "list_items";
+  }
+
+  @GetMapping("/item/{commodityId}")
+  public String itemDetail(@PathVariable String commodityId, Map<String, Object> model) {
+    OnlineShoppingCommodity commodity = dao.selectByPrimaryKey(Long.parseLong(commodityId));
+    model.put("commodity", commodity);
+    return "item_detail";
+  }
 }

@@ -17,4 +17,6 @@ public interface OnlineShoppingCommodityDao {
   OnlineShoppingCommodity selectByPrimaryKey(Long commodityId);
 
   List<OnlineShoppingCommodity> listCommoditiesByUserId(Long l);
+
+  List<OnlineShoppingCommodity> selectAll();
 }

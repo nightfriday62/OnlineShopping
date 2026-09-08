@@ -9,4 +9,6 @@ public interface OnlineShoppingOrderDao {
   int updateByPrimaryKeySelective(OnlineShoppingOrder record);
   int updateByPrimaryKey(OnlineShoppingOrder record);
   int deleteByPrimaryKey(Long id);
+
+  OnlineShoppingOrder selectByOrderNo(String orderNum);
 }
