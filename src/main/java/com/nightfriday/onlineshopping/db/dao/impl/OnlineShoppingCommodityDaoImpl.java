@@ -50,4 +50,9 @@ public class OnlineShoppingCommodityDaoImpl implements OnlineShoppingCommodityDa
   public List<OnlineShoppingCommodity> selectAll() {
     return onlineShoppingCommodityMapper.selectAll();
   }
+
+  @Override
+  public boolean decreaseAvailableStock(Long commodityId, int amount) {
+    return onlineShoppingCommodityMapper.decreaseAvailableStock(commodityId, amount) > 0;
+  }
 }

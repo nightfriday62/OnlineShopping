@@ -21,7 +21,7 @@ public class OrderController {
   public ModelAndView buyCommodity(@PathVariable Long userId, @PathVariable Long commodityId) {
     ModelAndView modelAndView = new ModelAndView();
     // log.info("User {} is attempting to buy commodity {}", userId, commodityId);
-    OnlineShoppingOrder order = orderService.processOrder(commodityId, userId);
+    OnlineShoppingOrder order = orderService.processOrderWithRedisLock(commodityId, userId);
     if (order != null) {
       modelAndView.addObject(
           "resultInfo", "Order created successfully, orderNo: " + order.getOrderNo());

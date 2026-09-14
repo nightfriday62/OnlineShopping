@@ -137,4 +137,9 @@
       lock_stock = #{lockStock,jdbcType=INTEGER}
     where commodity_id = #{commodityId,jdbcType=BIGINT}
   </update>
+  <update id="decreaseAvailableStock" parameterType="map">
+    update online_shopping_commodity
+    set available_stock = available_stock - #{amount,jdbcType=INTEGER}
+    where commodity_id = #{commodityId,jdbcType=BIGINT} and available_stock >= #{amount,jdbcType=INTEGER}
+  </update>
 </mapper>

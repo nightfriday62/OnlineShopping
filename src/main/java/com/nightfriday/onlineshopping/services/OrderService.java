@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class OrderService {
   @Autowired private OnlineShoppingOrderDao orderDao;
   @Autowired private OnlineShoppingCommodityDao commodityDao;
+  @Autowired private RedisService redisService;
 
   public OnlineShoppingOrder processOrder(Long commodityId, long userId) {
     OnlineShoppingCommodity commodity = commodityDao.selectByPrimaryKey(commodityId);
@@ -37,6 +38,47 @@ public class OrderService {
     return createOrder(commodityId, userId, commodity.getPrice());
   }
 
+  public OnlineShoppingOrder processOrderWithRedisLock(Long commodityId, long userId) {
+    String requestId = UUID.randomUUID().toString();
+    boolean lockAcquired =
+        redisService.getDistributedLock("commodity_lock_" + commodityId, requestId, 5000);
+    if (!lockAcquired) {
+      log.info("Could not acquire lock for commodityId: " + commodityId);
+      return null;
+    } else {
+      try {
+        boolean result = commodityDao.decreaseAvailableStock(commodityId, 1);
+        if (!result) {
+          log.info("Process order failed due to no available stock, commodityId:" + commodityId);
+          return null;
+        }
+      } finally {
+        redisService.releaseDistributedLock("commodity_lock_" + commodityId, requestId);
+      }
+    }
+    return createOrder(
+        commodityId, userId, commodityDao.selectByPrimaryKey(commodityId).getPrice());
+  }
+
+  public OnlineShoppingOrder processOrderWithRedis(Long commodityId, long userId) {
+    String stockKey = "commodity_stock_" + commodityId;
+    Long stock = redisService.stockDeduct(stockKey);
+    if (stock == null || stock < 0) {
+      log.info(
+          "Process order failed due to no available stock in Redis, commodityId:" + commodityId);
+      return null;
+    }
+
+    // Create order
+    OnlineShoppingCommodity commodity = commodityDao.selectByPrimaryKey(commodityId);
+    if (commodity == null) {
+      log.error("Commodity not found for id: {}", commodityId);
+      return null;
+    }
+
+    return createOrder(commodityId, userId, commodity.getPrice());
+  }
+
   public OnlineShoppingOrder createOrder(Long commodityId, Long userId, Integer price) {
     OnlineShoppingOrder order =
         OnlineShoppingOrder.builder()
@@ -50,17 +92,20 @@ public class OrderService {
     orderDao.insert(order);
     return order;
   }
+
   public OnlineShoppingOrder getByOrderNum(String orderNum) {
     return orderDao.selectByOrderNo(orderNum);
   }
-  // order status: 0: No stock available, invalid order 1: Order got created, pending for payment 2: finish payment
+
+  // order status: 0: No stock available, invalid order 1: Order got created, pending for payment 2:
+  // finish payment
   public void payOrderProcess(String orderNumber) {
     log.info("process pay order, orderNumber: {}", orderNumber);
     OnlineShoppingOrder order = orderDao.selectByOrderNo(orderNumber);
     if (order == null) {
       log.error("Order not found for orderNumber: {}", orderNumber);
       return;
-    }else if (order.getOrderStatus() != 1) {
+    } else if (order.getOrderStatus() != 1) {
       log.error("Order status is not pending for payment, orderNumber: {}", orderNumber);
       return;
     }
