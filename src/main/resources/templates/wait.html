@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User</title>
+</head>
+<body>
+<style>
+    .dialog-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .dialog-card>p {
+        display: flex;
+        flex-direction: row;
+        min-width: 10rem;
+    }
+
+    .dialog-card>p>span {
+        flex-grow: 1;
+        text-align: center;
+    }
+</style>
+<div class="dialog-card">
+    <h1>Request got throttled, please try again latter</h1>
+</div>
+
+</body>
+</html>

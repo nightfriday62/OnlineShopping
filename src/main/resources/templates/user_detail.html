@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User</title>
+    <style>
+        .dialog-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dialog-card>p {
+            display: flex;
+            flex-direction: row;
+            min-width: 10rem;
+        }
+
+        .dialog-card>p>span {
+            flex-grow: 1;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="dialog-card">
+    <h1>读取用户信息</h1>
+    <p>用户id：<span th:text="${user.id}"></span></p>
+    <p>用户名称：<span th:text="${user.name}"></span></p>
+    <p>用户age：<span th:text="${user.age}"></span></p>
+    <p>用户Email：<span th:text="${user.email}"></span></p>
+    <p>用户JWT：<span th:text="${jwtToken}"></span></p>
+    <p>decoded id：<span th:text="${jwtUserId}"></span></p>
+</div>
+
+</body>
+</html>
