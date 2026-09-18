@@ -3,6 +3,7 @@ package com.nightfriday.onlineshopping.services;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.params.SetParams;
 
@@ -93,6 +94,58 @@ public class RedisService {
     } catch (Exception e) {
       log.error("Error releasing distributed lock for key {}: {}", lockKey, e.getMessage());
       return false;
+    }
+  }
+
+  public Long increaseAvailableStock(Long commodityId, int i) {
+    try (var jedis = jedisPool.getResource()) {
+      String key = "commodity_stock_" + commodityId;
+      return jedis.incrBy(key, i);
+    } catch (Exception e) {
+      log.error(
+          "Error increasing available stock in Redis for commodityId {}: {}",
+          commodityId,
+          e.getMessage());
+    }
+    return null;
+  }
+
+  public void addToDenyList(String userId, String commodityId) {
+    try (var jedis = jedisPool.getResource()) {
+      String key = "online_shopping:deny_listUserId:" + userId;
+      jedis.sadd(key, commodityId);
+    } catch (Exception e) {
+      log.error(
+          "Error adding to deny list in Redis for userId {} and commodityId {}: {}",
+          userId,
+          commodityId,
+          e.getMessage());
+    }
+  }
+
+  public boolean isInDenyList(String userId, String commodityId) {
+    try (var jedis = jedisPool.getResource()) {
+      String key = "online_shopping:deny_listUserId:" + userId;
+      return jedis.sismember(key, commodityId);
+    } catch (Exception e) {
+      log.error(
+          "Error checking deny list in Redis for userId {} and commodityId {}: {}",
+          userId,
+          commodityId,
+          e.getMessage());
+      return false;
+    }
+  }
+
+  public void removeFromDenyList(String userId, String commodityId) {
+    try (var jedis = jedisPool.getResource()) {
+      String key = "online_shopping:deny_listUserId:" + userId;
+      jedis.srem(key, commodityId);
+    } catch (Exception e) {
+      log.error("Error removing deny list in Redis for userId {} and commodityId {}: {}",
+          userId,
+          commodityId,
+          e.getMessage());
     }
   }
 }

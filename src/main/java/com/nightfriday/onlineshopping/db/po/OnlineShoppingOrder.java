@@ -1,11 +1,13 @@
 package com.nightfriday.onlineshopping.db.po;
 
 import java.util.Date;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 @Builder
 @Data
+@AllArgsConstructor
 public class OnlineShoppingOrder {
     private Long orderId;
 

@@ -21,4 +21,5 @@ public interface OnlineShoppingCommodityDao {
   List<OnlineShoppingCommodity> selectAll();
 
   boolean decreaseAvailableStock(Long commodityId, int amount);
+  boolean increaseAvailableStock(Long commodityId, int amount);
 }

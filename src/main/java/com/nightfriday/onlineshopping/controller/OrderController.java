@@ -21,7 +21,7 @@ public class OrderController {
   public ModelAndView buyCommodity(@PathVariable Long userId, @PathVariable Long commodityId) {
     ModelAndView modelAndView = new ModelAndView();
     // log.info("User {} is attempting to buy commodity {}", userId, commodityId);
-    OnlineShoppingOrder order = orderService.processOrderWithRedisLock(commodityId, userId);
+    OnlineShoppingOrder order = orderService.createOnlineShoppingOrderFinal(userId, commodityId);
     if (order != null) {
       modelAndView.addObject(
           "resultInfo", "Order created successfully, orderNo: " + order.getOrderNo());
@@ -29,7 +29,7 @@ public class OrderController {
     } else {
       modelAndView.addObject(
           "resultInfo",
-          "Order creation failed, no stock available for commodityId: " + commodityId);
+          "Order creation failed" + commodityId);
     }
     modelAndView.setViewName("order_result");
     return modelAndView;

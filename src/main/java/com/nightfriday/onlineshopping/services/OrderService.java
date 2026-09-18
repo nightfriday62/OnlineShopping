@@ -1,9 +1,11 @@
 package com.nightfriday.onlineshopping.services;
 
+import com.alibaba.fastjson.JSON;
 import com.nightfriday.onlineshopping.db.dao.OnlineShoppingCommodityDao;
 import com.nightfriday.onlineshopping.db.dao.OnlineShoppingOrderDao;
 import com.nightfriday.onlineshopping.db.po.OnlineShoppingCommodity;
 import com.nightfriday.onlineshopping.db.po.OnlineShoppingOrder;
+import com.nightfriday.onlineshopping.services.RQService.RocketMQService;
 import java.util.Date;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,25 @@ public class OrderService {
   @Autowired private OnlineShoppingOrderDao orderDao;
   @Autowired private OnlineShoppingCommodityDao commodityDao;
   @Autowired private RedisService redisService;
+  @Autowired private RocketMQService rocketMQService;
+
+  public OnlineShoppingOrder createOnlineShoppingOrderFinal(Long userId, Long commodityId) {
+    if (redisService.isInDenyList(String.valueOf(userId), String.valueOf(commodityId))) {
+      log.info("User {} is in deny list for commodity {}", userId, commodityId);
+      return null;
+    }
+    String redisKey = "commodity_stock_" + commodityId;
+    Long remainStock = redisService.stockDeduct(redisKey);
+    if (remainStock >= 0) {
+      OnlineShoppingOrder order = createOrder(commodityId, userId, 1, false);
+      rocketMQService.sendFIFOMessage("createOrder", JSON.toJSONString(order));
+      log.info("Order Placed");
+      redisService.addToDenyList(String.valueOf(userId), String.valueOf(commodityId));
+      return order;
+    }
+    log.warn("Order Not Placed");
+    return null;
+  }
 
   public OnlineShoppingOrder processOrder(Long commodityId, long userId) {
     OnlineShoppingCommodity commodity = commodityDao.selectByPrimaryKey(commodityId);
@@ -35,7 +56,7 @@ public class OrderService {
 
     // Create order
 
-    return createOrder(commodityId, userId, commodity.getPrice());
+    return createOrder(commodityId, userId, commodity.getPrice(), true);
   }
 
   public OnlineShoppingOrder processOrderWithRedisLock(Long commodityId, long userId) {
@@ -57,7 +78,7 @@ public class OrderService {
       }
     }
     return createOrder(
-        commodityId, userId, commodityDao.selectByPrimaryKey(commodityId).getPrice());
+        commodityId, userId, commodityDao.selectByPrimaryKey(commodityId).getPrice(), true);
   }
 
   public OnlineShoppingOrder processOrderWithRedis(Long commodityId, long userId) {
@@ -76,20 +97,23 @@ public class OrderService {
       return null;
     }
 
-    return createOrder(commodityId, userId, commodity.getPrice());
+    return createOrder(commodityId, userId, commodity.getPrice(), true);
   }
 
-  public OnlineShoppingOrder createOrder(Long commodityId, Long userId, Integer price) {
+  public OnlineShoppingOrder createOrder(
+      Long commodityId, Long userId, Integer amount, boolean shouldSaveToDB) {
     OnlineShoppingOrder order =
         OnlineShoppingOrder.builder()
             .commodityId(commodityId)
             .userId(userId)
-            .orderAmount(Long.valueOf(price))
+            .orderAmount(Long.valueOf(amount))
             .orderNo(UUID.randomUUID().toString())
             .createTime(new Date())
             .orderStatus(1)
             .build();
-    orderDao.insert(order);
+    if (shouldSaveToDB) {
+      orderDao.insert(order);
+    }
     return order;
   }
 

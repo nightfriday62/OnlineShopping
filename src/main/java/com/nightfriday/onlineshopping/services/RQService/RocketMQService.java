@@ -20,4 +20,13 @@ public class RocketMQService {
     }
     // rocketMQTemplate.syncSendOrderly(topic, message, "orderId");
   }
+  public void sendDelayMessage(String topic, String message, int delayTime) {
+    Message msg = new Message(topic, message.getBytes());
+    msg.setDelayTimeLevel(delayTime);
+    try {
+      rocketMQTemplate.getProducer().send(msg, ((mqs,msg1,arg) -> mqs.get(0)),null);
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+    }
+  }
 }
