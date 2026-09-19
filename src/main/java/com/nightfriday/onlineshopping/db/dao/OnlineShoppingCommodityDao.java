@@ -22,4 +22,6 @@ public interface OnlineShoppingCommodityDao {
 
   boolean decreaseAvailableStock(Long commodityId, int amount);
   boolean increaseAvailableStock(Long commodityId, int amount);
+
+  List<OnlineShoppingCommodity> searchByDescription(String description);
 }

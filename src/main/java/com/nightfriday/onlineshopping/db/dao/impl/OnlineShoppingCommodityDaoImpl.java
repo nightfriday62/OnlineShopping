@@ -60,4 +60,9 @@ public class OnlineShoppingCommodityDaoImpl implements OnlineShoppingCommodityDa
   public boolean increaseAvailableStock(Long commodityId, int amount) {
     return onlineShoppingCommodityMapper.increaseAvailableStock(commodityId, amount) > 0;
   }
+
+  @Override
+  public List<OnlineShoppingCommodity> searchByDescription(String description) {
+    return onlineShoppingCommodityMapper.searchByDescription(description);
+  }
 }

@@ -24,4 +24,6 @@ public interface OnlineShoppingCommodityMapper {
   int decreaseAvailableStock(@Param("commodityId") Long commodityId, @Param("amount") int amount);
 
   int increaseAvailableStock(Long commodityId, int amount);
+
+  List<OnlineShoppingCommodity> searchByDescription(String description);
 }

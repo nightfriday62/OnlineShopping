@@ -58,4 +58,18 @@ public class CommodityController {
     model.put("commodity", commodity);
     return "item_detail";
   }
+
+  @GetMapping("/search")
+  public String searchCommodity(
+      @RequestParam(value = "desc", required = false) String description,
+      Map<String, Object> model) {
+    if (description == null) {
+      List<OnlineShoppingCommodity> commodities = dao.selectAll();
+      model.put("itemList", commodities);
+      return "list_items";
+    }
+    List<OnlineShoppingCommodity> commodities = dao.searchByDescription(description);
+    model.put("itemList", commodities);
+    return "list_items";
+  }
 }
