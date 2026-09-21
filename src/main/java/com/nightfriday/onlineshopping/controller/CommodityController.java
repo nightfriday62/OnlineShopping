@@ -2,8 +2,10 @@ package com.nightfriday.onlineshopping.controller;
 
 import com.nightfriday.onlineshopping.db.dao.OnlineShoppingCommodityDao;
 import com.nightfriday.onlineshopping.db.po.OnlineShoppingCommodity;
+import com.nightfriday.onlineshopping.services.EsService;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
+@Slf4j
 public class CommodityController {
   @Autowired private OnlineShoppingCommodityDao dao;
+  @Autowired private EsService esService;
 
   @RequestMapping("/addItem")
   public String addCommodity() {
@@ -68,7 +72,9 @@ public class CommodityController {
       model.put("itemList", commodities);
       return "list_items";
     }
-    List<OnlineShoppingCommodity> commodities = dao.searchByDescription(description);
+    //List<OnlineShoppingCommodity> commodities = dao.searchByDescription(description);
+    log.info("Searching for commodities with description: {}", description);
+    List<OnlineShoppingCommodity> commodities = esService.searchCommodity(description);
     model.put("itemList", commodities);
     return "list_items";
   }

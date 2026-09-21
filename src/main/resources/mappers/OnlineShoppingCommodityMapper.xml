@@ -27,7 +27,7 @@
       from online_shopping_commodity
       where creator_user_id = #{userId,jdbcType=BIGINT}
     </select>
-    <select id="selectAll" resultType="com.nightfriday.onlineshopping.db.po.OnlineShoppingCommodity">
+    <select id="selectAll" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
         from online_shopping_commodity
