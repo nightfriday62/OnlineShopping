@@ -19,12 +19,13 @@ public class OrderService {
   @Autowired private OnlineShoppingCommodityDao commodityDao;
   @Autowired private RedisService redisService;
   @Autowired private RocketMQService rocketMQService;
+  @Autowired private Snowflake snowflake;
 
   public OnlineShoppingOrder createOnlineShoppingOrderFinal(Long userId, Long commodityId) {
-    if (redisService.isInDenyList(String.valueOf(userId), String.valueOf(commodityId))) {
-      log.info("User {} is in deny list for commodity {}", userId, commodityId);
-      return null;
-    }
+//    if (redisService.isInDenyList(String.valueOf(userId), String.valueOf(commodityId))) {
+//      log.info("User {} is in deny list for commodity {}", userId, commodityId);
+//      return null;
+//    }
     String redisKey = "commodity_stock_" + commodityId;
     Long remainStock = redisService.stockDeduct(redisKey);
     if (remainStock >= 0) {
@@ -104,6 +105,7 @@ public class OrderService {
       Long commodityId, Long userId, Integer amount, boolean shouldSaveToDB) {
     OnlineShoppingOrder order =
         OnlineShoppingOrder.builder()
+            .orderId(snowflake.nextId())
             .commodityId(commodityId)
             .userId(userId)
             .orderAmount(Long.valueOf(amount))

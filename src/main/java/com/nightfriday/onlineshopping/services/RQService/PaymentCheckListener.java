@@ -39,8 +39,8 @@ public class PaymentCheckListener
       // revert stock in DB
       onlineShoppingCommodityDao.increaseAvailableStock(
           orderFromDB.getCommodityId(), orderFromDB.getOrderAmount().intValue());
-      orderFromDB.setOrderStatus(99);
-      onlineShoppingOrderDao.updateByPrimaryKey(orderFromDB);
+
+      onlineShoppingOrderDao.setOrderStatus(orderFromDB.getOrderId(), orderFromDB.getUserId(), 99);
       // revert stock in Redis
       Long increased =
           redisService.increaseAvailableStock(

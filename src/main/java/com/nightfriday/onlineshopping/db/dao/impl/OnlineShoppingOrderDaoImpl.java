@@ -3,6 +3,7 @@ package com.nightfriday.onlineshopping.db.dao.impl;
 import com.nightfriday.onlineshopping.db.dao.OnlineShoppingOrderDao;
 import com.nightfriday.onlineshopping.db.mappers.OnlineShoppingOrderMapper;
 import com.nightfriday.onlineshopping.db.po.OnlineShoppingOrder;
+import com.nightfriday.onlineshopping.services.Snowflake;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -22,8 +23,8 @@ public class OnlineShoppingOrderDaoImpl implements OnlineShoppingOrderDao {
   }
 
   @Override
-  public OnlineShoppingOrder selectByPrimaryKey(Long id) {
-    return mapper.selectByPrimaryKey(id);
+  public OnlineShoppingOrder selectByPrimaryKey(Long id, Long userId) {
+    return mapper.selectByPrimaryKey(id, userId);
   }
 
   @Override
@@ -37,12 +38,17 @@ public class OnlineShoppingOrderDaoImpl implements OnlineShoppingOrderDao {
   }
 
   @Override
-  public int deleteByPrimaryKey(Long id) {
-    return mapper.deleteByPrimaryKey(id);
+  public int deleteByPrimaryKey(Long id, Long userId) {
+    return mapper.deleteByPrimaryKey(id, userId);
   }
 
   @Override
   public OnlineShoppingOrder selectByOrderNo(String orderNum) {
     return mapper.selectByOrderNum(orderNum);
+  }
+
+  @Override
+  public int setOrderStatus(Long orderId, Long userId, int status) {
+    return mapper.setOrderStatus(orderId, userId, status);
   }
 }

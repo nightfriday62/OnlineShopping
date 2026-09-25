@@ -19,7 +19,7 @@
     select 
     <include refid="Base_Column_List" />
     from online_shopping_order
-    where order_id = #{orderId,jdbcType=BIGINT}
+    where order_id = #{orderId,jdbcType=BIGINT} and user_id = #{userId,jdbcType=BIGINT}
   </select>
     <select id="selectByOrderNum" resultType="com.nightfriday.onlineshopping.db.po.OnlineShoppingOrder">
       select
@@ -27,9 +27,9 @@
       from online_shopping_order
       where order_no = #{orderNum,jdbcType=VARCHAR}
     </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <delete id="deleteByPrimaryKey">
     delete from online_shopping_order
-    where order_id = #{orderId,jdbcType=BIGINT}
+    where order_id = #{orderId,jdbcType=BIGINT} and user_id = #{userId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.nightfriday.onlineshopping.db.po.OnlineShoppingOrder">
     insert into online_shopping_order (order_id, order_no, order_status, 
@@ -131,5 +131,10 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       pay_time = #{payTime,jdbcType=TIMESTAMP}
     where order_id = #{orderId,jdbcType=BIGINT}
+  </update>
+  <update id="setOrderStatus" parameterType="map">
+    update online_shopping_order
+    set order_status = #{status,jdbcType=INTEGER}
+    where order_id = #{orderId,jdbcType=BIGINT} and user_id = #{userId,jdbcType=BIGINT}
   </update>
 </mapper>

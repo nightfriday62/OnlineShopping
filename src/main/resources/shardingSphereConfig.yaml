@@ -1,0 +1,68 @@
+# JDBC logic database name. Through this parameter to connect ShardingSphere-JDBC and ShardingSphere-Proxy.
+# Default value: logic_db
+databaseName: logic_db
+
+mode:
+  type: Standalone
+  repository:
+    type: JDBC
+
+dataSources:
+  ds_0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://localhost:3306/online_shopping?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=true
+    username: root
+    password: ""
+  ds_1:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://localhost:3306/online_shopping_1?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=true
+    username: root
+    password: ""
+  ds_2:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://localhost:3306/online_shopping_2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=true
+    username: root
+    password: ""
+
+
+rules:
+  - !SHARDING
+    tables:
+      online_shopping_user:
+        actualDataNodes: ds_0.online_shopping_user
+      online_shopping_commodity:
+        actualDataNodes: ds_0.online_shopping_commodity
+      online_shopping_order:
+        actualDataNodes: ds_$->{1..2}.online_shopping_order_$->{1..2}
+        databaseStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: online_shopping_order_database_inline
+        tableStrategy:
+          standard:
+            shardingColumn: order_id
+            shardingAlgorithmName: online_shopping_order_table_inline
+#        keyGenerateStrategy:
+#          column: order_id
+#          keyGeneratorName: snowflake
+#    keyGenerators:
+#      snowflake:
+#        type: SNOWFLAKE
+    shardingAlgorithms:
+      online_shopping_order_table_inline:
+        type: INLINE
+        props:
+          algorithm-expression: online_shopping_order_$->{order_id % 2 + 1}
+      online_shopping_order_database_inline:
+        type: INLINE
+        props:
+          algorithm-expression: ds_$->{user_id % 2 + 1}
+
+
+
+props:
+  sql-show: true
+
