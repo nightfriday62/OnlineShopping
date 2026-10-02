@@ -43,6 +43,7 @@ public class CommodityController {
             .lockStock(0)
             .build();
     int savedId = dao.insert(commodity);
+    esService.addCommodityToEs(commodity);
     commodity.setCommodityId((long) savedId);
     model.put("abc", commodity);
     return "add_commodity_success";
