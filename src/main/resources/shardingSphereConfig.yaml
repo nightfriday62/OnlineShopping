@@ -11,21 +11,21 @@ dataSources:
   ds_0:
     dataSourceClassName: com.zaxxer.hikari.HikariDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    jdbcUrl: jdbc:mysql://localhost:3306/online_shopping?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=true
+    jdbcUrl: jdbc:mysql://onlineshopping-sqldatabase.ce2iswmkqvon.ca-west-1.rds.amazonaws.com:3306/online_shopping?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=true
     username: root
-    password: ""
+    password: rootroot
   ds_1:
     dataSourceClassName: com.zaxxer.hikari.HikariDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    jdbcUrl: jdbc:mysql://localhost:3306/online_shopping_1?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=true
+    jdbcUrl: jdbc:mysql://onlineshopping-sqldatabase.ce2iswmkqvon.ca-west-1.rds.amazonaws.com:3306/online_shopping_1?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=true
     username: root
-    password: ""
+    password: rootroot
   ds_2:
     dataSourceClassName: com.zaxxer.hikari.HikariDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    jdbcUrl: jdbc:mysql://localhost:3306/online_shopping_2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=true
+    jdbcUrl: jdbc:mysql://onlineshopping-sqldatabase.ce2iswmkqvon.ca-west-1.rds.amazonaws.com:3306/online_shopping_2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=true
     username: root
-    password: ""
+    password: rootroot
 
 
 rules:
