@@ -10,6 +10,7 @@ import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisClientConfig;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.SslOptions;
 
 @Slf4j
 @Configuration
@@ -42,6 +43,7 @@ public class JedisConfig {
         .connectionTimeoutMillis(timeoutMillis)
         .socketTimeoutMillis(timeoutMillis)
         .blockingSocketTimeoutMillis(timeoutMillis)
+        .sslOptions(SslOptions.builder().build())
         .build();
 
     JedisPoolConfig poolConfig = new JedisPoolConfig();
