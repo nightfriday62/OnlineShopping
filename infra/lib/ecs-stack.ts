@@ -1,7 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import * as ec2 from "aws-cdk-lib/aws-ec2";
-import * as rds from "aws-cdk-lib/aws-rds";
+import * as iam from "aws-cdk-lib/aws-iam"
 
 import * as ecs_patterns from "aws-cdk-lib/aws-ecs-patterns";
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
@@ -10,12 +10,16 @@ import * as custom from 'aws-cdk-lib/custom-resources';
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as ecr from "aws-cdk-lib/aws-ecr-assets";
 import * as path from 'path';
-import {IRepository} from 'aws-cdk-lib/aws-ecr';
+import {IRepository, Repository} from 'aws-cdk-lib/aws-ecr';
+import {NetworkStack} from "./network-stack";
+import {IamStack} from "./iam-stack";
+import {DataStack} from "./data-stack";
 
 interface MyEcsConstructStackProps extends cdk.StackProps {
     ecrRepo: IRepository;
-    vpc: ec2.IVpc;
-    db: rds.DatabaseInstance;
+    dataStack: DataStack;
+    networkStack: NetworkStack;
+    iamStack: IamStack;
 }
 
 export class EcsStack extends cdk.Stack {
@@ -23,17 +27,17 @@ export class EcsStack extends cdk.Stack {
 
     constructor(scope: Construct, id: string, props: MyEcsConstructStackProps) {
         super(scope, id, props);
-        const vpc = props.vpc;
-        const db = props.db;
+        const db = props.dataStack.db;
+        const networkStack = props.networkStack;
+        const ec = props.dataStack.ec;
+        const esInstance = props.dataStack.esInstance;
+        const mqInstance = props.dataStack.mqInstance;
+
         const cluster = new ecs.Cluster(this, "MyCluster", {
-            vpc: vpc
+            vpc: networkStack.vpc
         });
 
-        const initTaskSG = new ec2.SecurityGroup(this, 'InitTaskSG', {
-            vpc: vpc,
-            description: 'Security group for init ECS task',
-            allowAllOutbound: true
-        });
+
 
         const initTaskDef = new ecs.FargateTaskDefinition(this, "InitTaskDef", {
             memoryLimitMiB: 512,
@@ -59,7 +63,7 @@ export class EcsStack extends cdk.Stack {
             cluster: cluster,
             taskDefinition: initTaskDef,
             launchTarget: new tasks.EcsFargateLaunchTarget(),
-            securityGroups: [initTaskSG],
+            securityGroups: [networkStack.appSecurityGroup],
             assignPublicIp: true,
             subnets: {subnetType: ec2.SubnetType.PUBLIC}
         });
@@ -102,6 +106,11 @@ export class EcsStack extends cdk.Stack {
                     DB_HOST: db.dbInstanceEndpointAddress,
                     DB_USER: 'rootroot',
                     DB_PASSWORD: 'rootroot',
+                    ES_HOST: esInstance.instancePrivateIp,
+                    ES_API_KEY_PARAMETER: '/online-shopping/es/api-key',
+                    ROCKETMQ_NAME_SERVER: mqInstance.instancePrivateIp + ":9876",
+                    REDIS_HOST: ec.attrRedisEndpointAddress,
+                    REDIS_PORT: ec.attrRedisEndpointPort
                 }
             },
             publicLoadBalancer: true,
@@ -121,6 +130,10 @@ export class EcsStack extends cdk.Stack {
         })
 
         props.ecrRepo.grantPull(this.fargateService.taskDefinition.taskRole);
+        this.fargateService.taskDefinition.taskRole.addToPrincipalPolicy(new iam.PolicyStatement({
+            actions: ["ssm:GetParameter"],
+            resources: ["*"]
+        }));
 
         startExecution.node.addDependency(db);
         this.fargateService.node.addDependency(startExecution);

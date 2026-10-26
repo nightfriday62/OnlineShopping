@@ -76,7 +76,6 @@ export class DataStack extends cdk.Stack {
         new cdk.CfnOutput(this, "ElasticsearchPrivateIp", {
             value: this.esInstance.instancePrivateIp,
         });
-        // TODO: RocketMQ
         const mqMachineImage = ec2.MachineImage.genericLinux({
             "ca-west-1": "ami-070766b99524b8d4b"
         });
