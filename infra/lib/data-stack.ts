@@ -25,7 +25,7 @@ export class DataStack extends cdk.Stack {
             engine: rds.DatabaseInstanceEngine.mysql({version: rds.MysqlEngineVersion.VER_8_0_42}),
             instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.SMALL),
             vpc: props.vpc,
-            credentials: rds.Credentials.fromPassword('rootroot', cdk.SecretValue.unsafePlainText('rootroot')),
+            credentials: rds.Credentials.fromPassword('root', cdk.SecretValue.unsafePlainText('rootroot')),
             allocatedStorage: 20,
             databaseName: 'online_shopping',
             vpcSubnets: {subnetType: ec2.SubnetType.PRIVATE_ISOLATED},

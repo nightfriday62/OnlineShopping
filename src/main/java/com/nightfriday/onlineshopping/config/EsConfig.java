@@ -1,7 +1,11 @@
 package com.nightfriday.onlineshopping.config;
 
 import co.elastic.clients.transport.TransportUtils;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import javax.net.ssl.SSLContext;
+import org.apache.hc.core5.ssl.SSLContexts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,11 +30,16 @@ public class EsConfig {
   private String esApiKeyParameter;
 
   @Bean
-  public ElasticsearchClient esClient(ObjectMapper objectMapper) {
+  public ElasticsearchClient esClient(ObjectMapper objectMapper)
+      throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
     if (esApiKey == null || esApiKey.isBlank()) {
       esApiKey = getApiKeyFromParameterStore(objectMapper);
     }
-    return ElasticsearchClient.of(builder -> builder.apiKey(esApiKey).host(esHost + ":" + esPort));
+    SSLContext insecureContext = SSLContexts.custom()
+        .loadTrustMaterial(null, (chain, authType) -> true)
+        .build();
+    String host = "https://" + esHost + ":" + esPort;
+    return ElasticsearchClient.of(builder -> builder.apiKey(esApiKey).host(host).sslContext(insecureContext));
   }
 
   private String getApiKeyFromParameterStore(ObjectMapper objectMapper) {

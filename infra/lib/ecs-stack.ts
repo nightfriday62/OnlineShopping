@@ -134,6 +134,7 @@ export class EcsStack extends cdk.Stack {
 
         startExecution.node.addDependency(db);
         this.fargateService.node.addDependency(startExecution);
+        this.fargateService.targetGroup.configureHealthCheck({ path: "/hello" })
 
         new cdk.CfnOutput(this, "RDSEndpoint", {
             value: db.dbInstanceEndpointAddress

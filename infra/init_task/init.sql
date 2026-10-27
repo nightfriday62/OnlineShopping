@@ -27,10 +27,10 @@ USE `online_shopping`;
 -- Table structure for table `online_shopping_commodity`
 --
 
-DROP TABLE IF EXISTS `online_shopping_commodity`;
+
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `online_shopping_commodity` (
+CREATE TABLE IF NOT EXISTS `online_shopping_commodity` (
   `commodity_id` bigint NOT NULL AUTO_INCREMENT,
   `commodity_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `commodity_desc` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -49,10 +49,10 @@ CREATE TABLE `online_shopping_commodity` (
 -- Table structure for table `online_shopping_order`
 --
 
-DROP TABLE IF EXISTS `online_shopping_order`;
+
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `online_shopping_order` (
+CREATE TABLE IF NOT EXISTS `online_shopping_order` (
   `order_id` bigint NOT NULL AUTO_INCREMENT,
   `order_no` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `order_status` int NOT NULL,
@@ -73,10 +73,7 @@ CREATE TABLE `online_shopping_order` (
 -- Table structure for table `online_shopping_user`
 --
 
-DROP TABLE IF EXISTS `online_shopping_user`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `online_shopping_user` (
+CREATE TABLE IF NOT EXISTS `online_shopping_user` (
   `user_id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户 ID',
   `user_type` int NOT NULL COMMENT '用户类型 1 buyer 2 seller',
   `name` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '用户名',
@@ -85,6 +82,10 @@ CREATE TABLE `online_shopping_user` (
   `phone` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '手机号',
   PRIMARY KEY (`user_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+
+INSERT INTO `online_shopping_user` (`user_id`, `user_type`, `name`, `email`, `address`, `phone`) VALUES
+(1, 2, 'testSeller', 'testSeller@example.com', '123 Seller St', '1234567890');
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -107,10 +108,7 @@ USE `online_shopping_1`;
 -- Table structure for table `online_shopping_order_1`
 --
 
-DROP TABLE IF EXISTS `online_shopping_order_1`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `online_shopping_order_1` (
+CREATE TABLE IF NOT EXISTS `online_shopping_order_1` (
   `order_id` bigint NOT NULL,
   `order_no` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `order_status` int NOT NULL,
@@ -127,10 +125,9 @@ CREATE TABLE `online_shopping_order_1` (
 -- Table structure for table `online_shopping_order_2`
 --
 
-DROP TABLE IF EXISTS `online_shopping_order_2`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `online_shopping_order_2` (
+CREATE TABLE IF NOT EXISTS `online_shopping_order_2` (
   `order_id` bigint NOT NULL,
   `order_no` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `order_status` int NOT NULL,
@@ -163,10 +160,7 @@ USE `online_shopping_2`;
 -- Table structure for table `online_shopping_order_1`
 --
 
-DROP TABLE IF EXISTS `online_shopping_order_1`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `online_shopping_order_1` (
+CREATE TABLE IF NOT EXISTS `online_shopping_order_1` (
   `order_id` bigint NOT NULL,
   `order_no` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `order_status` int NOT NULL,
@@ -183,10 +177,7 @@ CREATE TABLE `online_shopping_order_1` (
 -- Table structure for table `online_shopping_order_2`
 --
 
-DROP TABLE IF EXISTS `online_shopping_order_2`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `online_shopping_order_2` (
+CREATE TABLE IF NOT EXISTS `online_shopping_order_2` (
   `order_id` bigint NOT NULL,
   `order_no` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `order_status` int NOT NULL,
