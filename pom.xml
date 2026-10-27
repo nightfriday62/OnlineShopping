@@ -147,6 +147,7 @@
     </dependencies>
 
     <build>
+        <finalName>onlineshopping</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
