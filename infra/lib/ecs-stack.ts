@@ -53,7 +53,7 @@ export class EcsStack extends cdk.Stack {
             }),
             environment: {
                 DB_HOST: db.dbInstanceEndpointAddress,
-                DB_USER: 'rootroot',
+                DB_USER: 'root',
                 DB_PASSWORD: 'rootroot',
             }
         })
@@ -87,13 +87,10 @@ export class EcsStack extends cdk.Stack {
             })
         });
 
-        const usePipelineImage = this.node.tryGetContext("usePipelineImage") === "true";
 
-        const image = usePipelineImage
-            ? ecs.ContainerImage.fromEcrRepository(props.ecrRepo, "latest")
-            : ecs.ContainerImage.fromRegistry("amazon/amazon-ecs-sample");
+        const image = ecs.ContainerImage.fromEcrRepository(props.ecrRepo, "latest");
 
-        const containerPort = usePipelineImage? 8080:80;
+        const containerPort = 8080
 
         this.fargateService = new ecs_patterns.ApplicationLoadBalancedFargateService(this, "MyFargateService", {
             cluster: cluster,
@@ -104,7 +101,7 @@ export class EcsStack extends cdk.Stack {
                 containerPort: containerPort,
                 environment: {
                     DB_HOST: db.dbInstanceEndpointAddress,
-                    DB_USER: 'rootroot',
+                    DB_USER: 'root',
                     DB_PASSWORD: 'rootroot',
                     ES_HOST: esInstance.instancePrivateIp,
                     ES_API_KEY_PARAMETER: '/online-shopping/es/api-key',
