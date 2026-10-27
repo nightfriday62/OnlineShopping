@@ -5,6 +5,7 @@ import {NetworkStack} from '../lib/network-stack';
 import {DataStack} from '../lib/data-stack';
 import {EcsStack} from '../lib/ecs-stack';
 import {IamStack} from "../lib/iam-stack";
+import {CICDPipeline} from "../lib/cicd-pipeline";
 
 const app = new cdk.App();
 
@@ -17,9 +18,13 @@ const dataStack = new DataStack(app, 'DataStack', {
     iamStack: iamStack,
 });
 
-new EcsStack(app, 'EcsStack', {
+const ecsStack = new EcsStack(app, 'EcsStack', {
     ecrRepo: ecrStack.ecrRepo,
     dataStack: dataStack,
     networkStack: networkStack,
     iamStack: iamStack,
 });
+new CICDPipeline(app, 'CICDPipeline', {
+    ecrRepo: ecrStack.ecrRepo,
+    fargateService: ecsStack.fargateService,
+})

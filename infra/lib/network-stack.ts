@@ -15,7 +15,8 @@ export class NetworkStack extends cdk.Stack {
         super(scope, id, props);
 
         this.vpc = new ec2.Vpc(this, "MyVpc", {
-            maxAzs: 3
+            maxAzs: 3,
+            natGateways:0
         })
         this.appSecurityGroup = new ec2.SecurityGroup(this, "AppSecurityGroup", {
             vpc: this.vpc,
