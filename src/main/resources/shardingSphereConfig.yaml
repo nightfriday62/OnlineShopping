@@ -11,19 +11,19 @@ dataSources:
   ds_0:
     dataSourceClassName: com.zaxxer.hikari.HikariDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    jdbcUrl: jdbc:mysql://${DB_HOST}:3306/online_shopping?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=true
+    jdbcUrl: jdbc:mysql://${DB_HOST::localhost}:3306/online_shopping?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=true
     username: ${DB_USER::root}
     password: ${DB_PASSWORD::rootroot}
   ds_1:
     dataSourceClassName: com.zaxxer.hikari.HikariDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    jdbcUrl: jdbc:mysql://${DB_HOST}:3306/online_shopping_1?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=true
+    jdbcUrl: jdbc:mysql://${DB_HOST::localhost}:3306/online_shopping_1?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=true
     username: ${DB_USER::root}
     password: ${DB_PASSWORD::rootroot}
   ds_2:
     dataSourceClassName: com.zaxxer.hikari.HikariDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    jdbcUrl: jdbc:mysql://${DB_HOST}:3306/online_shopping_2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=true
+    jdbcUrl: jdbc:mysql://${DB_HOST::localhost}:3306/online_shopping_2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=true
     username: ${DB_USER::root}
     password: ${DB_PASSWORD::rootroot}
 
