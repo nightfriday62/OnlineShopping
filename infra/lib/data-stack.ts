@@ -22,7 +22,7 @@ export class DataStack extends cdk.Stack {
         super(scope, id, props);
 
         this.db = new rds.DatabaseInstance(this, "OnlineShoppingDB", {
-            engine: rds.DatabaseInstanceEngine.mysql({version: rds.MysqlEngineVersion.VER_8_0_42}),
+            engine: rds.DatabaseInstanceEngine.mysql({version: rds.MysqlEngineVersion.VER_8_0_46}),
             instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MICRO),
             vpc: props.vpc,
             credentials: rds.Credentials.fromPassword('root', cdk.SecretValue.unsafePlainText('rootroot')),

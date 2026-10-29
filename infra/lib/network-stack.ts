@@ -11,6 +11,7 @@ export class NetworkStack extends cdk.Stack {
     public readonly elasticSearchSecurityGroup: ec2.SecurityGroup;
     public readonly mqSecurityGroup: ec2.SecurityGroup;
     public readonly alb: elbv2.ApplicationLoadBalancer;
+    public readonly albSecurityGroup: ec2.SecurityGroup;
 
 
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -54,12 +55,21 @@ export class NetworkStack extends cdk.Stack {
         });
         this.mqSecurityGroup.addIngressRule(this.appSecurityGroup, ec2.Port.tcp(9876), "Allow MQ name server access from app servers");
         this.mqSecurityGroup.addIngressRule(this.appSecurityGroup, ec2.Port.tcp(10911), "Allow MQ broker access from app servers");
-
+        this.albSecurityGroup = new ec2.SecurityGroup(this, "AlbSecurityGroup", {
+            vpc: this.vpc,
+            allowAllOutbound: true,
+            description: "Security group for ALB"
+        });
+        this.albSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(80), "Allow HTTP access from anywhere");
         this.alb = new elbv2.ApplicationLoadBalancer(this, "AppAlb", {
             vpc: this.vpc,
             internetFacing: true,
             vpcSubnets: {subnetType: ec2.SubnetType.PUBLIC},
+            securityGroup: this.albSecurityGroup,
         });
+
+
+
 
         const ssmEndpoint = new ec2.InterfaceVpcEndpoint(this, 'SSMEndpoint', {
             vpc: this.vpc,
