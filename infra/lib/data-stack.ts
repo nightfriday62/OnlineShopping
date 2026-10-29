@@ -23,32 +23,33 @@ export class DataStack extends cdk.Stack {
 
         this.db = new rds.DatabaseInstance(this, "OnlineShoppingDB", {
             engine: rds.DatabaseInstanceEngine.mysql({version: rds.MysqlEngineVersion.VER_8_0_42}),
-            instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.SMALL),
+            instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MICRO),
             vpc: props.vpc,
             credentials: rds.Credentials.fromPassword('root', cdk.SecretValue.unsafePlainText('rootroot')),
             allocatedStorage: 20,
             databaseName: 'online_shopping',
             vpcSubnets: {subnetType: ec2.SubnetType.PRIVATE_ISOLATED},
-            securityGroups: [props.networkStack.dbSecurityGroup]
+            securityGroups: [props.networkStack.dbSecurityGroup],
+            removalPolicy: cdk.RemovalPolicy.DESTROY,
+            deleteAutomatedBackups: true
         })
 
 
         const cacheSubnetGroup = new elasticache.CfnSubnetGroup(this, "OnlineShoppingCacheSubnetGroup", {
             description: "Subnet group for Online Shopping Cache",
-            subnetIds: props.vpc.selectSubnets({subnetType: ec2.SubnetType.PRIVATE_ISOLATED}).subnetIds,
-            cacheSubnetGroupName: "online-shopping-cache-subnet-group"
+            subnetIds: props.vpc.selectSubnets({subnetType: ec2.SubnetType.PRIVATE_ISOLATED}).subnetIds
         });
         this.ec = new elasticache.CfnCacheCluster(this, "OnlineShoppingCache", {
             cacheNodeType: "cache.t4g.micro",
             engine: "redis",
             numCacheNodes: 1,
-            cacheSubnetGroupName: cacheSubnetGroup.cacheSubnetGroupName,
+            cacheSubnetGroupName: props.vpc.selectSubnets({subnetType: ec2.SubnetType.PRIVATE_ISOLATED}).subnetIds.length > 0 ? cacheSubnetGroup.ref : undefined,
             vpcSecurityGroupIds: [props.networkStack.cacheSecurityGroup.securityGroupId]
         })
 
 
         const esMachineImage = ec2.MachineImage.genericLinux({
-            "ca-west-1": "ami-0077a49fb348a9fb7"
+            "ca-central-1": "ami-05bca49ef71f27eae"
         });
 
         this.esInstance = new ec2.Instance(this, "ElasticsearchInstance", {
@@ -70,14 +71,14 @@ export class DataStack extends cdk.Stack {
             "install -m 600 -o root -g root /dev/null /root/es-bootstrap-secrets.txt",
             "echo \"elastic_password=${ELASTIC_PASSWORD}\" >> /root/es-bootstrap-secrets.txt",
             "echo \"api_key_response=${API_KEY_RESPONSE}\" >> /root/es-bootstrap-secrets.txt",
-            "aws ssm put-parameter --name /online-shopping/es/api-key --type SecureString --value '${API_KEY_RESPONSE}' --overwrite",
+            "aws ssm put-parameter --name /online-shopping/es/api-key --type SecureString --value \"${API_KEY_RESPONSE}\" --overwrite --region " + this.region,
         );
 
         new cdk.CfnOutput(this, "ElasticsearchPrivateIp", {
             value: this.esInstance.instancePrivateIp,
         });
         const mqMachineImage = ec2.MachineImage.genericLinux({
-            "ca-west-1": "ami-070766b99524b8d4b"
+            "ca-central-1": "ami-0dee711345ddec23d"
         });
         this.mqInstance = new ec2.Instance(this, "RocketMQInstance", {
             vpc: props.vpc,

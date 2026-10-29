@@ -1,6 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import * as ec2 from "aws-cdk-lib/aws-ec2";
+import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
 
 export class NetworkStack extends cdk.Stack {
     public readonly vpc: ec2.Vpc;
@@ -9,6 +10,7 @@ export class NetworkStack extends cdk.Stack {
     public readonly cacheSecurityGroup: ec2.SecurityGroup;
     public readonly elasticSearchSecurityGroup: ec2.SecurityGroup;
     public readonly mqSecurityGroup: ec2.SecurityGroup;
+    public readonly alb: elbv2.ApplicationLoadBalancer;
 
 
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -52,5 +54,19 @@ export class NetworkStack extends cdk.Stack {
         });
         this.mqSecurityGroup.addIngressRule(this.appSecurityGroup, ec2.Port.tcp(9876), "Allow MQ name server access from app servers");
         this.mqSecurityGroup.addIngressRule(this.appSecurityGroup, ec2.Port.tcp(10911), "Allow MQ broker access from app servers");
+
+        this.alb = new elbv2.ApplicationLoadBalancer(this, "AppAlb", {
+            vpc: this.vpc,
+            internetFacing: true,
+            vpcSubnets: {subnetType: ec2.SubnetType.PUBLIC},
+        });
+
+        const ssmEndpoint = new ec2.InterfaceVpcEndpoint(this, 'SSMEndpoint', {
+            vpc: this.vpc,
+            service: ec2.InterfaceVpcEndpointAwsService.SSM,
+            subnets: {subnetType: ec2.SubnetType.PRIVATE_ISOLATED},
+        });
+        ssmEndpoint.connections.allowFrom(this.elasticSearchSecurityGroup, ec2.Port.tcp(443), 'Allow SSM access from Elasticsearch security group');
+        ssmEndpoint.connections.allowFrom(this.appSecurityGroup, ec2.Port.tcp(443), 'Allow SSM access from App security group');
     }
 }

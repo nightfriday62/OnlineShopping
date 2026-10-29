@@ -10,6 +10,7 @@ export class EcrStack extends cdk.Stack {
 
         this.ecrRepo = new Repository(this, 'OnlineShoppingRepo', {
             repositoryName: 'onlineshopping',
+            removalPolicy: cdk.RemovalPolicy.DESTROY
         });
     }
 }

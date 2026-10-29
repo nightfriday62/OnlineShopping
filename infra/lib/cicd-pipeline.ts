@@ -35,7 +35,7 @@ export class CICDPipeline extends cdk.Stack {
           pre_build: {
             commands: [
               'echo Logging in to Amazon ECR...',
-              `aws ecr get-login-password --region ca-west-1 | docker login --username AWS --password-stdin ${props.ecrRepo.repositoryUri.split('/')[0]}`,
+              `aws ecr get-login-password --region ${this.region} | docker login --username AWS --password-stdin ${props.ecrRepo.repositoryUri.split('/')[0]}`,
               'COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)',
               'IMAGE_TAG=${COMMIT_HASH}'
             ]

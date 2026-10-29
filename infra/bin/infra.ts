@@ -8,23 +8,27 @@ import {IamStack} from "../lib/iam-stack";
 import {CICDPipeline} from "../lib/cicd-pipeline";
 
 const app = new cdk.App();
+const env = {account: process.env.CDK_DEFAULT_ACCOUNT, region: 'ca-central-1'};
 
-const ecrStack = new EcrStack(app, 'EcrStack');
-const networkStack = new NetworkStack(app, 'NetworkStack');
-const iamStack = new IamStack(app, 'IamStack');
+const ecrStack = new EcrStack(app, 'EcrStack', {env});
+const networkStack = new NetworkStack(app, 'NetworkStack', {env});
+const iamStack = new IamStack(app, 'IamStack', {env});
 const dataStack = new DataStack(app, 'DataStack', {
+    env,
     vpc: networkStack.vpc,
     networkStack: networkStack,
     iamStack: iamStack,
 });
 
 const ecsStack = new EcsStack(app, 'EcsStack', {
+    env,
     ecrRepo: ecrStack.ecrRepo,
     dataStack: dataStack,
     networkStack: networkStack,
     iamStack: iamStack,
 });
 new CICDPipeline(app, 'CICDPipeline', {
+    env,
     ecrRepo: ecrStack.ecrRepo,
     fargateService: ecsStack.fargateService,
 })

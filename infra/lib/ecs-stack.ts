@@ -38,7 +38,6 @@ export class EcsStack extends cdk.Stack {
         });
 
 
-
         const initTaskDef = new ecs.FargateTaskDefinition(this, "InitTaskDef", {
             memoryLimitMiB: 512,
             cpu: 256
@@ -88,30 +87,38 @@ export class EcsStack extends cdk.Stack {
         });
 
 
-        const image = ecs.ContainerImage.fromEcrRepository(props.ecrRepo, "latest");
+        const image = ecs.ContainerImage.fromAsset(path.join(__dirname, '../..'), {
+            platform: ecr.Platform.LINUX_AMD64,
+        });
 
         const containerPort = 8080
 
         this.fargateService = new ecs_patterns.ApplicationLoadBalancedFargateService(this, "MyFargateService", {
-            cluster: cluster,
-            desiredCount: 1,
-            taskImageOptions: {
-                containerName: "onlineshopping",
-                image: image,
-                containerPort: containerPort,
-                environment: {
-                    DB_HOST: db.dbInstanceEndpointAddress,
-                    DB_USER: 'root',
-                    DB_PASSWORD: 'rootroot',
-                    ES_HOST: esInstance.instancePrivateIp,
-                    ES_API_KEY_PARAMETER: '/online-shopping/es/api-key',
-                    ROCKETMQ_NAME_SERVER: mqInstance.instancePrivateIp + ":9876",
-                    REDIS_HOST: ec.attrRedisEndpointAddress,
-                    REDIS_PORT: ec.attrRedisEndpointPort
-                }
-            },
-            publicLoadBalancer: true,
-            memoryLimitMiB: 512,
+                cluster: cluster,
+                desiredCount: 1,
+                assignPublicIp: true,
+                taskSubnets: {subnetType: ec2.SubnetType.PUBLIC},
+                taskImageOptions: {
+                    containerName: "onlineshopping",
+                    image: image,
+                    containerPort: containerPort,
+                    environment: {
+                        DB_HOST: db.dbInstanceEndpointAddress,
+                        DB_USER: 'root',
+                        DB_PASSWORD: 'rootroot',
+                        ES_HOST: esInstance.instancePrivateIp,
+                        ES_API_KEY_PARAMETER: '/online-shopping/es/api-key',
+                        ROCKETMQ_NAME_SERVER: mqInstance.instancePrivateIp + ":9876",
+                        REDIS_HOST: ec.attrRedisEndpointAddress,
+                        REDIS_PORT: ec.attrRedisEndpointPort
+                    }
+                },
+                loadBalancer: props.networkStack.alb,
+                securityGroups: [props.networkStack.appSecurityGroup],
+                memoryLimitMiB: 1024,
+                cpu: 512,
+                healthCheckGracePeriod: cdk.Duration.minutes(3),
+                circuitBreaker: {rollback: true}
             }
         )
 
@@ -134,15 +141,16 @@ export class EcsStack extends cdk.Stack {
 
         startExecution.node.addDependency(db);
         this.fargateService.node.addDependency(startExecution);
-        this.fargateService.targetGroup.configureHealthCheck({ path: "/hello" })
+        this.fargateService.targetGroup.configureHealthCheck({path: "/hello"})
+
 
         new cdk.CfnOutput(this, "RDSEndpoint", {
             value: db.dbInstanceEndpointAddress
         });
 
-        new cdk.CfnOutput(this,"LoadBalancerURL", {
+        new cdk.CfnOutput(this, "LoadBalancerURL", {
             value: this.fargateService.loadBalancer.loadBalancerDnsName
-        })
+        });
 
 
     }
