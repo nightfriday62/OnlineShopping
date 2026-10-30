@@ -43,7 +43,6 @@ public class JedisConfig {
         .connectionTimeoutMillis(timeoutMillis)
         .socketTimeoutMillis(timeoutMillis)
         .blockingSocketTimeoutMillis(timeoutMillis)
-        .sslOptions(SslOptions.builder().build())
         .build();
 
     JedisPoolConfig poolConfig = new JedisPoolConfig();
