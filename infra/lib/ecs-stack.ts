@@ -109,8 +109,8 @@ export class EcsStack extends cdk.Stack {
                         ES_HOST: esInstance.instancePrivateIp,
                         ES_API_KEY_PARAMETER: '/online-shopping/es/api-key',
                         ROCKETMQ_NAME_SERVER: mqInstance.instancePrivateIp + ":9876",
-                        REDIS_HOST: ec.attrRedisEndpointAddress,
-                        REDIS_PORT: ec.attrRedisEndpointPort
+                        REDIS_HOST: ec.attrPrimaryEndPointAddress,
+                        REDIS_PORT: ec.attrPrimaryEndPointPort
                     }
                 },
                 loadBalancer: props.networkStack.alb,

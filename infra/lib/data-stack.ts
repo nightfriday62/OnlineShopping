@@ -14,7 +14,7 @@ interface DataStackProps extends cdk.StackProps {
 
 export class DataStack extends cdk.Stack {
     public readonly db: rds.DatabaseInstance;
-    public readonly ec: elasticache.CfnCacheCluster;
+    public readonly ec: elasticache.CfnReplicationGroup;
     public readonly esInstance: ec2.Instance;
     public readonly mqInstance: ec2.Instance;
 
@@ -32,20 +32,23 @@ export class DataStack extends cdk.Stack {
             securityGroups: [props.networkStack.dbSecurityGroup],
             removalPolicy: cdk.RemovalPolicy.DESTROY,
             deleteAutomatedBackups: true
-        })
+        });
 
 
         const cacheSubnetGroup = new elasticache.CfnSubnetGroup(this, "OnlineShoppingCacheSubnetGroup", {
             description: "Subnet group for Online Shopping Cache",
             subnetIds: props.vpc.selectSubnets({subnetType: ec2.SubnetType.PRIVATE_ISOLATED}).subnetIds
         });
-        this.ec = new elasticache.CfnCacheCluster(this, "OnlineShoppingCache", {
+        this.ec = new elasticache.CfnReplicationGroup(this, "OnlineShoppingCache", {
             cacheNodeType: "cache.t4g.micro",
-            engine: "redis",
-            numCacheNodes: 1,
+            engine: "valkey",
             cacheSubnetGroupName: props.vpc.selectSubnets({subnetType: ec2.SubnetType.PRIVATE_ISOLATED}).subnetIds.length > 0 ? cacheSubnetGroup.ref : undefined,
-            vpcSecurityGroupIds: [props.networkStack.cacheSecurityGroup.securityGroupId]
-        })
+            replicationGroupDescription: "Replication group for Online Shopping Cache",
+            securityGroupIds: [props.networkStack.cacheSecurityGroup.securityGroupId],
+            transitEncryptionEnabled: false,
+            numCacheClusters: 1,
+            automaticFailoverEnabled: false,
+        });
 
 
         const esMachineImage = ec2.MachineImage.genericLinux({
