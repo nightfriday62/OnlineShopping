@@ -24,4 +24,8 @@ export class IamStack extends cdk.Stack {
             actions:["ssm:GetParameter", "ssm:PutParameter"],
             resources: [`arn:aws:ssm:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:parameter/online-shopping/es/*`]
         }))
+        this.ESRole.addToPolicy(new iam.PolicyStatement({
+            actions: ["cloudformation:SignalResource", "ec2:DescribeTags"],
+            resources: ["*"]
+        }))
     }}

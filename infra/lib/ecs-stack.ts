@@ -108,6 +108,7 @@ export class EcsStack extends cdk.Stack {
                         DB_PASSWORD: 'rootroot',
                         ES_HOST: esInstance.instancePrivateIp,
                         ES_API_KEY_PARAMETER: '/online-shopping/es/api-key',
+                        ES_CA_CERT_PARAMETER: '/online-shopping/es/ca-cert',
                         ROCKETMQ_NAME_SERVER: mqInstance.instancePrivateIp + ":9876",
                         REDIS_HOST: ec.attrPrimaryEndPointAddress,
                         REDIS_PORT: ec.attrPrimaryEndPointPort
@@ -136,7 +137,7 @@ export class EcsStack extends cdk.Stack {
         props.ecrRepo.grantPull(this.fargateService.taskDefinition.taskRole);
         this.fargateService.taskDefinition.taskRole.addToPrincipalPolicy(new iam.PolicyStatement({
             actions: ["ssm:GetParameter"],
-            resources: ["*"]
+            resources: [`arn:aws:ssm:${this.region}:${this.account}:parameter/online-shopping/es/*`]
         }));
 
         startExecution.node.addDependency(db);
