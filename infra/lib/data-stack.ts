@@ -22,7 +22,7 @@ export class DataStack extends cdk.Stack {
         super(scope, id, props);
 
         this.db = new rds.DatabaseInstance(this, "OnlineShoppingDB", {
-            engine: rds.DatabaseInstanceEngine.mysql({version: rds.MysqlEngineVersion.VER_8_0_46}),
+            engine: rds.DatabaseInstanceEngine.mysql({version: rds.MysqlEngineVersion.VER_8_4_10}),
             instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MICRO),
             vpc: props.vpc,
             credentials: rds.Credentials.fromPassword('root', cdk.SecretValue.unsafePlainText('rootroot')),
@@ -31,7 +31,8 @@ export class DataStack extends cdk.Stack {
             vpcSubnets: {subnetType: ec2.SubnetType.PRIVATE_ISOLATED},
             securityGroups: [props.networkStack.dbSecurityGroup],
             removalPolicy: cdk.RemovalPolicy.DESTROY,
-            deleteAutomatedBackups: true
+            deleteAutomatedBackups: true,
+            allowMajorVersionUpgrade: true
         });
 
 
@@ -90,7 +91,11 @@ export class DataStack extends cdk.Stack {
             machineImage: mqMachineImage,
             securityGroup: props.networkStack.mqSecurityGroup
         });
-
+        this.mqInstance.userData.addCommands(
+            "IP=$(curl -s -H \"X-aws-ec2-metadata-token: $(curl -s -X PUT http://169.254.169.254/latest/api/token -H 'X-aws-ec2-metadata-token-ttl-seconds: 60')\" http://169.254.169.254/latest/meta-data/local-ipv4)",
+            "sed -i \"s/^brokerIP1=.*/brokerIP1=$IP/\" /home/ec2-user/broker.conf",
+            "sudo systemctl restart docker",
+        );
         new cdk.CfnOutput(this, "RocketMQPrivateIp", {
             value: this.mqInstance.instancePrivateIp,
         });

@@ -42,7 +42,7 @@ public class CreateOrderListener
     if (decreased) {
       order.setCreateTime(new Date());
       onlineShoppingOrderDao.insert(order);
-      rocketMQService.sendDelayMessage("PaymentCheck", JSON.toJSONString(order),4);
+      rocketMQService.sendDelayMessage("PaymentCheck", JSON.toJSONString(order),14);
       log.info("Added order to DB:" + order);
     }
   }

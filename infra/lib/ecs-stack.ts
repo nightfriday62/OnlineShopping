@@ -121,7 +121,7 @@ export class EcsStack extends cdk.Stack {
                 circuitBreaker: {rollback: true}
             }
         )
-
+        this.fargateService.taskDefinition.obtainExecutionRole().addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonEC2ContainerRegistryReadOnly"));
         const scalableTarget = this.fargateService.service.autoScaleTaskCount({
             minCapacity: 1,
             maxCapacity: 2
