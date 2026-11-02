@@ -7,7 +7,7 @@
     <p><a th:href="@{/search}">&larr; Back to products</a></p>
     <div class="card detail" th:if="${commodity != null}">
         <div class="thumb large"
-             th:style="'background:hsl(' + ${commodity.commodityId * 47 % 360} + ',70%,88%)'"
+             th:style="'background:hsl(' + ${commodity.commodityId != null ? commodity.commodityId * 47 % 360 : 210} + ',70%,88%)'"
              th:text="${#strings.isEmpty(commodity.commodityName)} ? '?' : ${#strings.toUpperCase(#strings.substring(commodity.commodityName, 0, 1))}"></div>
         <div>
             <h1 th:text="${commodity.commodityName}">Name</h1>

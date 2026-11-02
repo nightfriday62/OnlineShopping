@@ -9,7 +9,7 @@
     <div class="grid" th:unless="${#lists.isEmpty(itemList)}">
         <article class="card product" th:each="item : ${itemList}">
             <div class="thumb"
-                 th:style="'background:hsl(' + ${item.commodityId * 47 % 360} + ',70%,88%)'"
+                 th:style="'background:hsl(' + ${item.commodityId != null ? item.commodityId * 47 % 360 : 210} + ',70%,88%)'"
                  th:text="${#strings.isEmpty(item.commodityName)} ? '?' : ${#strings.toUpperCase(#strings.substring(item.commodityName, 0, 1))}"></div>
             <div class="product-body">
                 <h2 class="product-name" th:text="${item.commodityName}">Name</h2>
@@ -17,7 +17,7 @@
                 <div class="row">
                     <span class="badge ok" th:if="${item.availableStock > 0}" th:text="${item.availableStock} + ' in stock'">In stock</span>
                     <span class="badge bad" th:unless="${item.availableStock > 0}">Sold out</span>
-                    <a th:href="@{'/item/' + ${item.commodityId}}">View</a>
+                    <a th:if="${item.commodityId != null}" th:href="@{'/item/' + ${item.commodityId}}">View</a>
                 </div>
             </div>
         </article>
