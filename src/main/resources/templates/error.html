@@ -1,32 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>User</title>
-</head>
+<head th:replace="~{fragments :: head('Error')}"></head>
 <body>
-<style>
-    .dialog-card {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .dialog-card>p {
-        display: flex;
-        flex-direction: row;
-        min-width: 10rem;
-    }
-
-    .dialog-card>p>span {
-        flex-grow: 1;
-        text-align: center;
-    }
-</style>
-<div class="dialog-card">
-    <h1>Error occurred</h1>
-</div>
-
+<header th:replace="~{fragments :: header}"></header>
+<main class="container">
+    <div class="card narrow center">
+        <h1>Something went wrong</h1>
+        <p class="muted">We couldn't find what you were looking for. Please try again.</p>
+        <a class="btn" th:href="@{/search}">Back to products</a>
+    </div>
+</main>
 </body>
 </html>
