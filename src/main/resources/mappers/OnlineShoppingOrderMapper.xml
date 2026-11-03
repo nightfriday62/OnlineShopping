@@ -106,9 +106,6 @@
       <if test="commodityId != null">
         commodity_id = #{commodityId,jdbcType=BIGINT},
       </if>
-      <if test="userId != null">
-        user_id = #{userId,jdbcType=BIGINT},
-      </if>
       <if test="orderAmount != null">
         order_amount = #{orderAmount,jdbcType=DECIMAL},
       </if>
@@ -120,6 +117,7 @@
       </if>
     </set>
     where order_id = #{orderId,jdbcType=BIGINT}
+    and user_id = #{userId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.nightfriday.onlineshopping.db.po.OnlineShoppingOrder">
     update online_shopping_order
