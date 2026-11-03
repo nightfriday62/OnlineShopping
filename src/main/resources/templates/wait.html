@@ -4,11 +4,11 @@
 <body>
 <header th:replace="~{fragments :: header}"></header>
 <main class="container">
-    <div class="card narrow center">
-        <h1>Too many requests</h1>
+    <h1 class="page-title">Too many requests</h1>
+    <section class="panel narrow center">
         <p class="muted">Request got throttled, please try again later.</p>
-        <a class="btn" th:href="@{/search}">Back to products</a>
-    </div>
+        <a class="button" th:href="@{/search}">Back to products</a>
+    </section>
 </main>
 </body>
 </html>

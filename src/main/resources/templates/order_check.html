@@ -4,32 +4,37 @@
 <body>
 <header th:replace="~{fragments :: header}"></header>
 <main class="container">
-    <div class="card narrow">
-        <h1>Order details</h1>
-        <dl>
-            <div class="kv"><dt>Order number</dt><dd th:text="${order.orderNo}">-</dd></div>
-            <div class="kv"><dt>Product</dt><dd th:text="${commodity != null} ? ${commodity.commodityName} : '-'">-</dd></div>
-            <div class="kv"><dt>Amount</dt><dd th:text="'$' + ${order.orderAmount}">$0</dd></div>
-            <div class="kv"><dt>Created</dt><dd th:text="${#dates.format(order.createTime, 'yyyy-MM-dd HH:mm:ss')}">-</dd></div>
-            <div class="kv" th:if="${order.orderStatus == 2 and order.payTime != null}">
-                <dt>Paid</dt><dd th:text="${#dates.format(order.payTime, 'yyyy-MM-dd HH:mm:ss')}">-</dd>
-            </div>
-            <div class="kv">
-                <dt>Status</dt>
-                <dd th:switch="${order.orderStatus}">
-                    <span th:case="0" class="badge bad">Out of stock</span>
-                    <span th:case="1" class="badge warn">Awaiting payment</span>
-                    <span th:case="2" class="badge ok">Paid</span>
-                    <span th:case="99" class="badge bad">Closed (payment timed out)</span>
-                    <span th:case="*" class="badge">Unknown</span>
-                </dd>
-            </div>
-        </dl>
-        <div class="actions">
-            <a class="btn" th:if="${order.orderStatus == 1}" th:href="@{'/commodity/payOrder/' + ${order.orderNo}}">Pay now</a>
-            <a class="btn secondary" th:href="@{/search}">Back to products</a>
+    <h1 class="page-title">Order details</h1>
+    <section class="panel narrow">
+        <div class="table-wrap">
+            <table class="details-table">
+                <tbody>
+                <tr><th scope="row">Order number</th><td th:text="${order.orderNo}">-</td></tr>
+                <tr><th scope="row">Product</th><td th:text="${commodity != null} ? ${commodity.commodityName} : '-'">-</td></tr>
+                <tr><th scope="row">Amount</th><td class="money" th:text="'$' + ${order.orderAmount}">$0</td></tr>
+                <tr><th scope="row">Created</th><td th:text="${#dates.format(order.createTime, 'yyyy-MM-dd HH:mm:ss')}">-</td></tr>
+                <tr th:if="${order.orderStatus == 2 and order.payTime != null}">
+                    <th scope="row">Paid</th>
+                    <td th:text="${#dates.format(order.payTime, 'yyyy-MM-dd HH:mm:ss')}">-</td>
+                </tr>
+                <tr>
+                    <th scope="row">Status</th>
+                    <td th:switch="${order.orderStatus}">
+                        <span th:case="0" class="status error">Out of stock</span>
+                        <span th:case="1" class="status waiting">Awaiting payment</span>
+                        <span th:case="2" class="status success">Paid</span>
+                        <span th:case="99" class="status error">Closed (payment timed out)</span>
+                        <span th:case="*" class="muted">Unknown</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-    </div>
+        <div class="actions">
+            <a class="button" th:if="${order.orderStatus == 1}" th:href="@{'/commodity/payOrder/' + ${order.orderNo}}">Pay now</a>
+            <a class="button secondary" th:href="@{/search}">Back to products</a>
+        </div>
+    </section>
 </main>
 </body>
 </html>

@@ -4,24 +4,38 @@
 <body>
 <header th:replace="~{fragments :: header}"></header>
 <main class="container">
-    <h1>Products</h1>
-    <div class="empty" th:if="${#lists.isEmpty(itemList)}">No products found.</div>
-    <div class="grid" th:unless="${#lists.isEmpty(itemList)}">
-        <article class="card product" th:each="item : ${itemList}">
-            <div class="thumb"
-                 th:style="'background:hsl(' + ${item.commodityId != null ? item.commodityId * 47 % 360 : 210} + ',70%,88%)'"
-                 th:text="${#strings.isEmpty(item.commodityName)} ? '?' : ${#strings.toUpperCase(#strings.substring(item.commodityName, 0, 1))}"></div>
-            <div class="product-body">
-                <h2 class="product-name" th:text="${item.commodityName}">Name</h2>
-                <div class="price" th:text="'$' + ${item.price}">$0</div>
-                <div class="row">
-                    <span class="badge ok" th:if="${item.availableStock > 0}" th:text="${item.availableStock} + ' in stock'">In stock</span>
-                    <span class="badge bad" th:unless="${item.availableStock > 0}">Sold out</span>
-                    <a th:if="${item.commodityId != null}" th:href="@{'/item/' + ${item.commodityId}}">View</a>
-                </div>
-            </div>
-        </article>
-    </div>
+    <h1 class="page-title">Products</h1>
+    <section class="section">
+        <div class="table-wrap" th:if="${!#lists.isEmpty(itemList)}">
+            <table>
+                <thead>
+                <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Availability</th>
+                    <th scope="col">Details</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${itemList}">
+                    <td th:text="${item.commodityName}">Product name</td>
+                    <td class="money" th:text="'$' + ${item.price}">$0</td>
+                    <td>
+                        <span class="status success" th:if="${item.availableStock > 0}"
+                              th:text="${item.availableStock} + ' in stock'">In stock</span>
+                        <span class="status error" th:unless="${item.availableStock > 0}">Sold out</span>
+                    </td>
+                    <td>
+                        <a th:if="${item.commodityId != null}"
+                           th:href="@{'/item/' + ${item.commodityId}}">View product</a>
+                        <span class="muted" th:unless="${item.commodityId != null}">Unavailable</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="empty" th:if="${#lists.isEmpty(itemList)}">No products found.</p>
+    </section>
 </main>
 </body>
 </html>

@@ -4,20 +4,24 @@
 <body>
 <header th:replace="~{fragments :: header}"></header>
 <main class="container">
-    <div class="card narrow">
-        <h1>Item added</h1>
-        <dl>
-            <div class="kv"><dt>Name</dt><dd th:text="${abc.commodityName}">Name</dd></div>
-            <div class="kv"><dt>Description</dt><dd th:text="${abc.commodityDesc}">Description</dd></div>
-            <div class="kv"><dt>Price</dt><dd th:text="'$' + ${abc.price}">$0</dd></div>
-            <div class="kv"><dt>Stock</dt><dd th:text="${abc.availableStock}">0</dd></div>
-            <div class="kv"><dt>Seller ID</dt><dd th:text="${abc.creatorUserId}">0</dd></div>
-        </dl>
-        <div class="actions">
-            <a class="btn" th:href="@{/addItem}">Add another</a>
-            <a class="btn secondary" th:href="@{/search}">View products</a>
+    <h1 class="page-title">Item added</h1>
+    <section class="panel narrow">
+        <div class="table-wrap">
+            <table class="details-table">
+                <tbody>
+                <tr><th scope="row">Name</th><td th:text="${abc.commodityName}">Name</td></tr>
+                <tr><th scope="row">Description</th><td th:text="${abc.commodityDesc}">Description</td></tr>
+                <tr><th scope="row">Price</th><td class="money" th:text="'$' + ${abc.price}">$0</td></tr>
+                <tr><th scope="row">Stock</th><td th:text="${abc.availableStock}">0</td></tr>
+                <tr><th scope="row">Seller ID</th><td th:text="${abc.creatorUserId}">0</td></tr>
+                </tbody>
+            </table>
         </div>
-    </div>
+        <div class="actions">
+            <a class="button" th:href="@{/addItem}">Add another item</a>
+            <a class="button secondary" th:href="@{/search}">View products</a>
+        </div>
+    </section>
 </main>
 </body>
 </html>

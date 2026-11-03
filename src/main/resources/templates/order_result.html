@@ -4,14 +4,16 @@
 <body>
 <header th:replace="~{fragments :: header}"></header>
 <main class="container">
-    <div class="card narrow center">
-        <h1 th:text="${orderNo != null} ? 'Order placed' : 'Order failed'">Order</h1>
+    <h1 class="page-title" th:text="${orderNo != null} ? 'Order placed' : 'Order failed'">Order</h1>
+    <section class="panel narrow center">
         <p th:text="${resultInfo}">Result</p>
-        <div class="actions" style="justify-content:center">
-            <a class="btn" th:if="${orderNo != null}" th:href="@{'/commodity/orderQuery/' + ${orderNo}}">View order</a>
-            <a class="btn secondary" th:href="@{/search}">Back to products</a>
+        <div class="section">
+            <div class="actions">
+                <a class="button" th:if="${orderNo != null}" th:href="@{'/commodity/orderQuery/' + ${orderNo}}">View order</a>
+                <a class="button secondary" th:href="@{/search}">Back to products</a>
+            </div>
         </div>
-    </div>
+    </section>
 </main>
 </body>
 </html>

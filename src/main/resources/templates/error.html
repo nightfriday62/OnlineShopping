@@ -4,11 +4,11 @@
 <body>
 <header th:replace="~{fragments :: header}"></header>
 <main class="container">
-    <div class="card narrow center">
-        <h1>Something went wrong</h1>
+    <h1 class="page-title">Something went wrong</h1>
+    <section class="panel narrow center">
         <p class="muted">We couldn't find what you were looking for. Please try again.</p>
-        <a class="btn" th:href="@{/search}">Back to products</a>
-    </div>
+        <a class="button" th:href="@{/search}">Back to products</a>
+    </section>
 </main>
 </body>
 </html>

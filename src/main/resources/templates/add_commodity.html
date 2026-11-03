@@ -4,8 +4,8 @@
 <body>
 <header th:replace="~{fragments :: header}"></header>
 <main class="container">
-    <div class="card narrow">
-        <h1>Sell an item</h1>
+    <h1 class="page-title">Sell an item</h1>
+    <section class="panel narrow">
         <form th:action="@{/commodities}" method="post">
             <label for="commodityName">Name</label>
             <input type="text" id="commodityName" name="commodityName" required>
@@ -17,9 +17,9 @@
             <input type="number" id="availableStock" name="availableStock" min="0" step="1" required>
             <label for="creatorUserId">Seller ID</label>
             <input type="number" id="creatorUserId" name="creatorUserId" min="0" step="1" required>
-            <button type="submit" class="btn block">Add item</button>
+            <button type="submit" class="form-submit">Add item</button>
         </form>
-    </div>
+    </section>
 </main>
 </body>
 </html>
